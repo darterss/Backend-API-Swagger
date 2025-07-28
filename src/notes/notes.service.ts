@@ -1,4 +1,4 @@
-import {GoneException, Injectable, NotFoundException} from '@nestjs/common';
+import {ForbiddenException, GoneException, Injectable, NotFoundException} from '@nestjs/common';
 import {PrismaService} from "../prisma/prisma.service";
 import {CreateNoteDto} from "./dto/create-note.dto";
 import {UpdateNoteDto} from "./dto/update-note.dto";
@@ -27,12 +27,16 @@ export class NotesService {
     }
 
     async findOne(id: string, userId: string) {
-        const note = await this.prisma.note.findFirst({
-            where: {id, userId},
+        const note = await this.prisma.note.findUnique({
+            where: { id },
         });
 
         if (!note) {
             throw new NotFoundException('Note not found');
+        }
+
+        if (note.userId !== userId) {
+            throw new ForbiddenException('You do not have permission to access this note');
         }
 
         return note;
@@ -57,8 +61,7 @@ export class NotesService {
 
 
     async createShareLink(noteId: string, userId: string, dto: CreateShareLinkDto) {
-        // checking access rights to note
-        await this.findOne(noteId, userId);
+        await this.findOne(noteId, userId); // checking access rights
 
         // uniq token generated
         const token = randomUUID();
@@ -84,7 +87,7 @@ export class NotesService {
     }
 
     async getShareLinks(noteId: string, userId: string) {
-        await this.findOne(noteId, userId);
+        await this.findOne(noteId, userId); // checking access rights
 
         return this.prisma.shareLink.findMany({
             where: {noteId},
@@ -100,7 +103,7 @@ export class NotesService {
     }
 
     async revokeShareLink(noteId: string, tokenId: string, userId: string) {
-        await this.findOne(noteId, userId);
+        await this.findOne(noteId, userId); // checking access rights
 
         const shareLink = await this.prisma.shareLink.findFirst({
             where: {id: tokenId, noteId},
