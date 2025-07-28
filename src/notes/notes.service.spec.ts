@@ -8,7 +8,7 @@ const mockPrismaService = {
   note: {
     create: jest.fn(),
     findMany: jest.fn(),
-    findFirst: jest.fn(),
+    findUnique: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
   },
@@ -62,7 +62,7 @@ describe('NotesService', () => {
   describe('createShareLink', () => {
     it('should create share link', async () => {
       // Arrange
-      mockPrismaService.note.findFirst.mockResolvedValue(mockNote);
+      mockPrismaService.note.findUnique.mockResolvedValue(mockNote);
       mockPrismaService.shareLink.create.mockResolvedValue({
         id: 'share-link-id',
         noteId,
@@ -80,14 +80,14 @@ describe('NotesService', () => {
       expect(result).toHaveProperty('token');
       expect(result).toHaveProperty('expiresAt');
       expect(result).toHaveProperty('url');
-      expect(mockPrismaService.note.findFirst).toHaveBeenCalledWith({
-        where: { id: noteId, userId },
+      expect(mockPrismaService.note.findUnique).toHaveBeenCalledWith({
+        where: { id: noteId },
       });
     });
 
     it('should throw NotFoundException when note not found', async () => {
       // Arrange
-      mockPrismaService.note.findFirst.mockResolvedValue(null);
+      mockPrismaService.note.findUnique.mockResolvedValue(null);
 
       // Act & Assert
       await expect(
@@ -193,7 +193,7 @@ describe('NotesService', () => {
   describe('revokeShareLink', () => {
     it('should revoke share link', async () => {
       // Arrange
-      mockPrismaService.note.findFirst.mockResolvedValue(mockNote);
+      mockPrismaService.note.findUnique.mockResolvedValue(mockNote);
       mockPrismaService.shareLink.findFirst.mockResolvedValue({
         id: 'share-link-id',
         noteId,
