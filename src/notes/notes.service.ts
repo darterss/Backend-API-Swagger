@@ -4,13 +4,14 @@ import {CreateNoteDto} from "./dto/create-note.dto";
 import {UpdateNoteDto} from "./dto/update-note.dto";
 import {CreateShareLinkDto} from "./dto/create-share-link.dto";
 import { randomUUID, createHash } from 'crypto';
+import {INote, IShareLinkResponse} from "./notes.types";
 
 @Injectable()
 export class NotesService {
     constructor(private prisma: PrismaService) {
     }
 
-    async create(userId: string, createNoteDto: CreateNoteDto) {
+    async create(userId: string, createNoteDto: CreateNoteDto): Promise<INote> {
         return this.prisma.note.create({
             data: {
                 ...createNoteDto,
@@ -19,14 +20,14 @@ export class NotesService {
         });
     }
 
-    async findAll(userId: string) {
+    async findAll(userId: string): Promise<INote[]> {
         return this.prisma.note.findMany({
             where: {userId},
             orderBy: {createdAt: 'desc'},
         });
     }
 
-    async findOne(id: string, userId: string) {
+    async findOne(id: string, userId: string): Promise<INote> {
         const note = await this.prisma.note.findUnique({
             where: { id },
         });
@@ -60,7 +61,7 @@ export class NotesService {
     }
 
 
-    async createShareLink(noteId: string, userId: string, dto: CreateShareLinkDto) {
+    async createShareLink(noteId: string, userId: string, dto: CreateShareLinkDto): Promise<IShareLinkResponse> {
         await this.findOne(noteId, userId); // checking access rights
 
         // uniq token generated
@@ -119,7 +120,7 @@ export class NotesService {
         });
     }
 
-    async getNoteByToken(token: string) {
+    async getNoteByToken(token: string): Promise<INote> {
         const tokenHash = createHash('sha256').update(token).digest('hex');
 
         const shareLink = await this.prisma.shareLink.findUnique({

@@ -54,3 +54,4 @@ GET /public/notes/:token - открыть одноразовую ссылку н
 npm i
 npm run test
 ```
+

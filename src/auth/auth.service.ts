@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import {ITokens} from "./auth.types";
 
 @Injectable()
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
-    async register(registerDto: RegisterDto) {
+    async register(registerDto: RegisterDto): Promise<ITokens> {
         const existingUser = await this.prisma.user.findUnique({
             where: { email: registerDto.email },
         });
@@ -34,7 +35,7 @@ export class AuthService {
         return this.generateTokens(user);
     }
 
-    async login(loginDto: LoginDto) {
+    async login(loginDto: LoginDto): Promise<ITokens> {
         const user = await this.prisma.user.findUnique({
             where: { email: loginDto.email },
         });
@@ -46,7 +47,7 @@ export class AuthService {
         return this.generateTokens(user);
     }
 
-    private generateTokens(user: User) {
+    private generateTokens(user: User): ITokens {
         const payload = { email: user.email, sub: user.id };
         return {
             accessToken: this.jwtService.sign(payload),
