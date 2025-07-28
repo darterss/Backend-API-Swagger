@@ -1,12 +1,24 @@
-# App start
+# Подготовка к запуску
+Предварительно установите Docker и Docker Compose, затем:
+```bash
+git clone https://github.com/darterss/Backend-Test-Artem-Demchuk.git
+cd Backend-Test-Artem-Demchuk
+```
+настройте окружение
+```bash
+cp .env.example .env
+```
+
+# Запуск
 
 ```bash
 docker-compose up -d
 ```
 
-Application is running on: http://localhost:3000
+### Приложение работает на: http://localhost:3000
 
-Swagger documentation: http://localhost:3000/api
+### Swagger-документация доступна по: http://localhost:3000/api
+    Для ручного тестирование зарегестрируйтесь (в ответе будет токен), в правом верхнем углу нажмите кнопку Authorize и введите полученный токен
 
 Test user
 ```
@@ -16,27 +28,29 @@ Password: password123
 
 # Endpoints:
 
-## Auth
+## Авторизация
 ```
-POST /auth/register - Registration
-POST /auth/login - Login
+POST /auth/register - Регистрация
+POST /auth/login - Авторизация
 ```
-## Notes
+## Заметки
 ```
-GET /notes - notes list
-POST /notes - create note
-GET /notes/:id - get note
-PUT /notes/:id - update note
-DELETE /notes/:id - delete note
+GET /notes - список заметок
+POST /notes - создать заметку
+GET /notes/:id - получить заметку
+PUT /notes/:id - отредактировать заметку
+DELETE /notes/:id - удалить заметку
 ```
-## Share Links
+## Одноразовые ссылки
 ```
-POST /notes/:id/share - create share link
-GET /notes/:id/share - list of share links
-DELETE /notes/:id/share/:tokenId - revocation of share link
-GET /public/notes/:token - open note by link
+POST /notes/:id/share - создать одноразовую ссылку на заметку
+GET /notes/:id/share - список одноразовых ссылок
+DELETE /notes/:id/share/:tokenId - отозвать одноразовую ссылку
+GET /public/notes/:token - открыть одноразовую ссылку на заметку
 ```
-# Testing
+# Тестирование
+Предварительно установите Node.js, затем:
 ```bash
+npm i
 npm run test
 ```
