@@ -2,7 +2,7 @@
 Предварительно установите Docker и Docker Compose, затем:
 ```bash
 git clone https://github.com/darterss/Backend-Test-Artem-Demchuk.git
-cd Backend-Test-Artem-Demchuk
+cd Backend-API-Swagger
 ```
 настройте окружение
 ```bash
